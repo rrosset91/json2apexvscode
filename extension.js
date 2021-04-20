@@ -3,7 +3,7 @@ const editor = vscode.window.activeTextEditor;
 const {spawn} = require('child_process');
 
 async function json2apex() {
-  let userSelection = editor.document.getText(editor.selection);
+  const userSelection = editor.document.getText(editor.selection);
   const className = await vscode.window.showInputBox({
     placeHolder: "Enter the generated class name"
   });
@@ -28,7 +28,6 @@ async function json2apex() {
   let response = await callPython(params).catch((e)=>{
 	  showMessage('error', `Something went wrong...${e.message}`);
   });
-
   if (editor) {
 	editor.edit((selectedText) => {
 		selectedText.replace(editor.selection, response);
