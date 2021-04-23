@@ -11,7 +11,7 @@ You will be asked a few options (Pretty straight forward)
 If everything's fine, your json content will be replaced with the Salesforce Wrapper Class as defined.
 ```
 
-![Demonstration](https://s4.gifyu.com/images/fullLwcCreator.gif)
+![Demonstration](https://s3.gifyu.com/images/json2apexdemo.gif)
 
 Please make sure to update your Visual Studio Code.
 

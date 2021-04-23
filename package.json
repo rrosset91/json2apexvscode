@@ -3,6 +3,21 @@
 	"displayName": "VSCodeJSON2Apex",
 	"description": "Convert JSON to Apex wrapper directly on vscode",
 	"version": "0.0.1",
+	"icon" : "json2apex.png",
+	"keywords": [
+		"Salesforce",
+		"Apex",
+		"JSON",
+		"Wrapper",
+		"Apex Wrapper",
+		"Aura",
+		"LWC",
+		"Salesforce CLI",
+		"Salesforce",
+		"SFDC"
+	],
+	"publisher": "RogerRosset",
+	"author": {"name": "Roger Rosset", "email": "rrosset91@gmail.com"},
 	"engines": {
 		"vscode": "^1.55.0"
 	},
