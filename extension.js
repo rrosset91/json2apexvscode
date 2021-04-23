@@ -23,14 +23,25 @@ async function json2apex() {
   });
   createTest = createTest.toUpperCase();
   createTest = createTest == '' ? false : createTest
-  createTest = createTest == 'Y' ? true : createTest
+  if(createTest === 'Y' || createTest === 'y'){
+    createTest = true;
+  }
+  if(createTest === 'F'){
+    createTest = false;
+  }
 
   let auraEnabled = await vscode.window.showInputBox({
     placeHolder: "Use @AuraEnabled? (Y/N - Default Y)"
   });
   auraEnabled = auraEnabled.toUpperCase();
   auraEnabled = auraEnabled == '' ? true : auraEnabled
-  auraEnabled = auraEnabled == 'N' ? false : auraEnabled
+  
+  if(auraEnabled === 'Y'){
+    auraEnabled = true;
+  }
+  if(auraEnabled === 'F'){
+    auraEnabled = false;
+  }
   
   try {
     isValidInput(auraEnabled, createTest); 
@@ -116,10 +127,10 @@ function isValidInput(aura, test){
     validTest = true;
   }
   if(!validAura){
-    throw new Error('Invalid option for auraEnabled, please use Y, N or Enter to Default');
+    throw new Error(`Aura ${aura}`);
   }
   if(!validTest){
-    throw new Error('Invalid option for create test class, please use Y, N or Enter to Default');
+    throw new Error(`Test ${test}`);
   }
 }
 
