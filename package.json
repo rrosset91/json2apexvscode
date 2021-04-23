@@ -2,8 +2,8 @@
 	"name": "vscodejson2apex",
 	"displayName": "VSCodeJSON2Apex",
 	"description": "Convert JSON to Apex wrapper directly on vscode",
-	"version": "0.0.1",
-	"icon" : "json2apex.png",
+	"version": "0.0.2",
+	"icon": "json2apex.png",
 	"keywords": [
 		"Salesforce",
 		"Apex",
@@ -17,7 +17,10 @@
 		"SFDC"
 	],
 	"publisher": "RogerRosset",
-	"author": {"name": "Roger Rosset", "email": "rrosset91@gmail.com"},
+	"author": {
+		"name": "Roger Rosset",
+		"email": "rrosset91@gmail.com"
+	},
 	"engines": {
 		"vscode": "^1.55.0"
 	},
