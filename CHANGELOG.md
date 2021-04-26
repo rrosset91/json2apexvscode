@@ -11,3 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## 0.0.3
 
 - Bug fixes
+
+## 0.0.4
+
+- Improved scope
