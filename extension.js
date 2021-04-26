@@ -1,16 +1,16 @@
 const fetch = require("node-fetch");
 const vscode = require("vscode");
-const editor = vscode.window.activeTextEditor;
+let editor = vscode.window.activeTextEditor;
 let outputTerminal = vscode.window.createOutputChannel("JSON2Apex");
 
 async function json2apex() {
-  const userSelection = editor.document.getText(editor.selection);
+  let userSelection = editor.document.getText(editor.selection);
   if(userSelection === '' || isInvalidSelection(userSelection)){
 	  showMessage('error', 'Please select a valid JSON content and try again');
 	  return;
 	} 
 
-  const className = await vscode.window.showInputBox({
+  let className = await vscode.window.showInputBox({
     placeHolder: "Enter the generated class name"
   });
   if(className === ''){
