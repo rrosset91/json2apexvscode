@@ -2,15 +2,19 @@ const fetch = require("node-fetch");
 const vscode = require("vscode");
 let editor = vscode.window.activeTextEditor;
 let outputTerminal = vscode.window.createOutputChannel("JSON2Apex");
-
+let userSelection;
+let className;
+let createTest;
+let auraEnabled;
+let params = {};
 async function json2apex() {
-  let userSelection = editor.document.getText(editor.selection);
+  userSelection = editor.document.getText(editor.selection);
   if(userSelection === '' || isInvalidSelection(userSelection)){
 	  showMessage('error', 'Please select a valid JSON content and try again');
 	  return;
 	} 
 
-  let className = await vscode.window.showInputBox({
+  className = await vscode.window.showInputBox({
     placeHolder: "Enter the generated class name"
   });
   if(className === ''){
@@ -18,7 +22,7 @@ async function json2apex() {
 	  return;
 	}
 
-  let createTest = await vscode.window.showInputBox({
+  createTest = await vscode.window.showInputBox({
     placeHolder: "Generate class with tests? (Y/N - Default N)"
   });
   createTest = createTest.toUpperCase();
@@ -30,7 +34,7 @@ async function json2apex() {
     createTest = false;
   }
 
-  let auraEnabled = await vscode.window.showInputBox({
+  auraEnabled = await vscode.window.showInputBox({
     placeHolder: "Use @AuraEnabled? (Y/N - Default Y)"
   });
   auraEnabled = auraEnabled.toUpperCase();
@@ -49,7 +53,6 @@ async function json2apex() {
     showMessage('error', error.message);
     return;
   }
-  let params = {};
   outputTerminal.show();
   createTest == '' ? 'N':createTest;	
   auraEnabled == '' ? 'Y':auraEnabled;	
