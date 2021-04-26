@@ -2,7 +2,7 @@
 	"name": "vscodejson2apex",
 	"displayName": "VSCodeJSON2Apex",
 	"description": "Convert JSON to Apex wrapper directly on vscode",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"icon": "json2apex.png",
 	"keywords": [
 		"Salesforce",
