@@ -2,15 +2,14 @@ const fetch = require("node-fetch");
 const vscode = require("vscode");
 let editor = vscode.window.activeTextEditor;
 let outputTerminal = vscode.window.createOutputChannel("JSON2Apex");
-let userSelection;
 let className;
 let createTest;
 let auraEnabled;
 let params = {};
 let requestBody = {};
 async function json2apex() {
-  userSelection = editor.document.getText(editor.selection);
-  if(userSelection === '' || isInvalidSelection(userSelection)){
+  let userSelection = editor.document.getText(editor.selection);
+  if(isInvalidSelection(userSelection)){
 	  showMessage('error', 'Please select a valid JSON content and try again');
 	  return;
 	} 
@@ -114,12 +113,13 @@ function showMessage(context, content){
 }
 
 function isInvalidSelection(input){
+  if(input == '') return true;
 	try {
-        JSON.parse(input);
+      JSON.parse(JSON.stringify(input));
+      return false;
     } catch (e) {
-        return true;
+      return true;
     }
-    return false;
 }
 
 function isValidInput(aura, test){
