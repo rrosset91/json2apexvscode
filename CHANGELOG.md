@@ -16,7 +16,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Improved scope
 
-## 0.1.0
+## 0.1.1
 
 - Improved scope
 - New feature - Generate Parse Method
