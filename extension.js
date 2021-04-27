@@ -7,6 +7,7 @@ let className;
 let createTest;
 let auraEnabled;
 let params = {};
+let requestBody = {};
 async function json2apex() {
   userSelection = editor.document.getText(editor.selection);
   if(userSelection === '' || isInvalidSelection(userSelection)){
@@ -53,13 +54,13 @@ async function json2apex() {
     showMessage('error', error.message);
     return;
   }
+  requestBody.jsonContent = String(userSelection)
   outputTerminal.show();
   createTest == '' ? 'N':createTest;	
   auraEnabled == '' ? 'Y':auraEnabled;	
   params.className = className;
   params.generateTest = createTest;
   params.auraEnabled = auraEnabled;
-  params.jsonContent = String(userSelection);
   outputTerminal.appendLine('Process started.Please stand by...')
   
   submitForConversion(params).catch((e)=>{
@@ -71,6 +72,7 @@ async function submitForConversion(params){
   let response = await fetch(`https://json2apexpy.herokuapp.com/json2apex?className=${params.className}&generateTest=${params.generateTest}&jsonContent=${params.jsonContent}&auraEnabled=${params.auraEnabled}`, {
         method: 'GET',
         mode: 'cors',
+        body: requestBody,
         headers: {
           'Content-Type': 'application/json'
         },
