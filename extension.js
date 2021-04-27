@@ -5,8 +5,8 @@ let outputTerminal = vscode.window.createOutputChannel("JSON2Apex");
 let className;
 let createTest;
 let auraEnabled;
+let parseMethod;
 let params = {};
-let requestBody = {};
 async function json2apex() {
   let userSelection = editor.document.getText(editor.selection);
   if(isInvalidSelection(userSelection)){
@@ -23,9 +23,10 @@ async function json2apex() {
   createTest = await vscode.window.showInputBox({
     placeHolder: "Generate class with tests? (Y/N - Default N)"
   });
-  createTest = validateInputs(createTest).createTest;
+
   try {
-    createTest = validateInputs(createTest).createTest;
+    let createTestOption = validateInputs(createTest, 'test')
+    createTest = createTestOption.createTest;
   } catch (error) {
     showMessage('error', error.message);
     return;
@@ -34,30 +35,42 @@ async function json2apex() {
     placeHolder: "Use @AuraEnabled? (Y/N - Default Y)"
   });
   try {
-    auraEnabled = validateInputs(auraEnabled).auraEnabled;
+    let auraOption = validateInputs(auraEnabled, 'aura');
+    auraEnabled = auraOption.auraEnabled;
   } catch (error) {
     showMessage('error', error.message);
     return;
   }
-  requestBody.jsonContent = String(userSelection)
+  parseMethod = await vscode.window.showInputBox({
+    placeHolder: "Generate Parse Method? (Y/N - Default N)"
+  });
+  try {
+    let parseOption = validateInputs(parseMethod, 'parse');
+    parseMethod = parseOption.parseMethod;
+  } catch (error) {
+    showMessage('error', error.message);
+    return;
+  }
   outputTerminal.show();
-  createTest == '' ? 'N':createTest;	
-  auraEnabled == '' ? 'Y':auraEnabled;	
   params.className = className;
   params.generateTest = createTest;
   params.auraEnabled = auraEnabled;
+  params.parseMethod = parseMethod;
+  params.userSelection = userSelection;
   outputTerminal.appendLine('Process started.Please stand by...')
   submitForConversion(params).catch((e)=>{
 	  showMessage('error', `Something went wrong...${e.message}`);
   });
 }
+
 async function submitForConversion(params){
-  let response = await fetch(`https://json2apexpy.herokuapp.com/json2apex?className=${params.className}&generateTest=${params.generateTest}&auraEnabled=${params.auraEnabled}`, {
-        method: 'GET',
+  let response = await fetch(`https://zg2y6bzug6.execute-api.us-east-1.amazonaws.com/dev/json2apex?className=${params.className}&generateTest=${params.generateTest}&auraEnabled=${params.auraEnabled}&parseMethod=${params.parseMethod}`, {
+        method: 'POST',
         mode: 'cors',
-        body: requestBody,
+        body: JSON.stringify({jsonContent: JSON.stringify(params.userSelection)}),
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept':'*/*'
         },
     }).catch((e)=>{
       showMessage('error', `Something went wrong...${e.message}`);
@@ -103,24 +116,39 @@ function isInvalidSelection(input){
       return true;
     }
 }
-function validateInputs(aura, test){
+function validateInputs(value, key){
+  value = value.toUpperCase();
   let validInputs = {};
-  aura = aura.toUpperCase();
-  test = test.toUpperCase();
-  if(aura == '' || aura == 'Y'){
+
+  if(key =='aura'){
+  if(value == '' || value == 'Y'){
     validInputs.auraEnabled = true
-  }else if(aura == 'N'){
+  }else if(value == 'N'){
     validInputs.auraEnabled = false
   }else{
     throw new Error('Invalid input for auraEnabled. Use Y, N or Enter for default (Y)');
   }
-  if(test == '' || test == 'N'){
+}
+
+if(key == 'test'){
+  if(value == '' || value == 'N'){
     validInputs.createTest = false
-  }else if(test == 'Y'){
+  }else if(value == 'Y'){
     validInputs.createTest = true
   }else{
     throw new Error('Invalid input for createTest. Use Y, N or Enter for default (N)');
   }
+}
+
+if(key == 'parse'){
+  if(value == '' || value == 'N'){
+    validInputs.parseMethod = false
+  }else if(value == 'Y'){
+    validInputs.parseMethod = true
+  }else{
+    throw new Error('Invalid input for Parse Method. Use Y, N or Enter for default (N)');
+  }
+}
   return validInputs;
 }
 function activate(context) {
