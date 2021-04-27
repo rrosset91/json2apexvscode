@@ -13,7 +13,6 @@ async function json2apex() {
 	  showMessage('error', 'Please select a valid JSON content and try again');
 	  return;
 	} 
-
   className = await vscode.window.showInputBox({
     placeHolder: "Enter the generated class name"
   });
@@ -21,34 +20,21 @@ async function json2apex() {
 	  showMessage('error', 'Classname cannot be empty');
 	  return;
 	}
-
   createTest = await vscode.window.showInputBox({
     placeHolder: "Generate class with tests? (Y/N - Default N)"
   });
-  createTest = createTest.toUpperCase();
-  createTest = createTest == '' ? false : createTest
-  if(createTest === 'Y' || createTest === 'y'){
-    createTest = true;
+  createTest = validateInputs(createTest).createTest;
+  try {
+    createTest = validateInputs(createTest).createTest;
+  } catch (error) {
+    showMessage('error', error.message);
+    return;
   }
-  if(createTest === 'F'){
-    createTest = false;
-  }
-
   auraEnabled = await vscode.window.showInputBox({
     placeHolder: "Use @AuraEnabled? (Y/N - Default Y)"
   });
-  auraEnabled = auraEnabled.toUpperCase();
-  auraEnabled = auraEnabled == '' ? true : auraEnabled
-  
-  if(auraEnabled === 'Y'){
-    auraEnabled = true;
-  }
-  if(auraEnabled === 'F'){
-    auraEnabled = false;
-  }
-  
   try {
-    isValidInput(auraEnabled, createTest); 
+    auraEnabled = validateInputs(auraEnabled).auraEnabled;
   } catch (error) {
     showMessage('error', error.message);
     return;
@@ -61,14 +47,12 @@ async function json2apex() {
   params.generateTest = createTest;
   params.auraEnabled = auraEnabled;
   outputTerminal.appendLine('Process started.Please stand by...')
-  
   submitForConversion(params).catch((e)=>{
 	  showMessage('error', `Something went wrong...${e.message}`);
   });
 }
-
 async function submitForConversion(params){
-  let response = await fetch(`https://json2apexpy.herokuapp.com/json2apex?className=${params.className}&generateTest=${params.generateTest}&jsonContent=${params.jsonContent}&auraEnabled=${params.auraEnabled}`, {
+  let response = await fetch(`https://json2apexpy.herokuapp.com/json2apex?className=${params.className}&generateTest=${params.generateTest}&auraEnabled=${params.auraEnabled}`, {
         method: 'GET',
         mode: 'cors',
         body: requestBody,
@@ -95,7 +79,6 @@ async function submitForConversion(params){
     showMessage('success', 'JSON conversion completed successfully');
   }
 }
-
 function showMessage(context, content){
 	switch (context) {
 		case 'success':
@@ -111,7 +94,6 @@ function showMessage(context, content){
 			break;
 	}
 }
-
 function isInvalidSelection(input){
   if(input == '') return true;
 	try {
@@ -121,24 +103,26 @@ function isInvalidSelection(input){
       return true;
     }
 }
-
-function isValidInput(aura, test){
-  let validAura = false;
-  let validTest = false;
-  if(aura === true || aura === false){
-    validAura = true;
+function validateInputs(aura, test){
+  let validInputs = {};
+  aura = aura.toUpperCase();
+  test = test.toUpperCase();
+  if(aura == '' || aura == 'Y'){
+    validInputs.auraEnabled = true
+  }else if(aura == 'N'){
+    validInputs.auraEnabled = false
+  }else{
+    throw new Error('Invalid input for auraEnabled. Use Y, N or Enter for default (Y)');
   }
-  if(test === true || test === false){
-    validTest = true;
+  if(test == '' || test == 'N'){
+    validInputs.createTest = false
+  }else if(test == 'Y'){
+    validInputs.createTest = true
+  }else{
+    throw new Error('Invalid input for createTest. Use Y, N or Enter for default (N)');
   }
-  if(!validAura){
-    throw new Error(`Aura ${aura}`);
-  }
-  if(!validTest){
-    throw new Error(`Test ${test}`);
-  }
+  return validInputs;
 }
-
 function activate(context) {
   let disposable = vscode.commands.registerCommand(
     "extension.json2apex",
@@ -146,11 +130,9 @@ function activate(context) {
       json2apex();
     }
   );
-
   context.subscriptions.push(disposable);
 }
 exports.activate = activate;
-
 function deactivate() {}
 exports.deactivate = deactivate;
  
